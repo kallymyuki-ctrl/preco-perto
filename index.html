@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f8b64">
+<meta name="description" content="Compare preços, ganhe cashback e trabalhe com o Preço Perto">
+<title>Preço Perto - Compare e Ganhe</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app-shell" id="app">
+
+<!-- PÁGINA HOME -->
+<div class="page" id="page-home">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">P</div>
+      <span>Preço Perto</span>
+    </div>
+    <button class="icon-button" onclick="showPage('profile')" title="Perfil">👤</button>
+  </header>
+
+  <div class="location-row">
+    <span class="location-pin">📍</span>
+    <div><strong>Entregar em:</strong> <span id="city-name">Porto Alegre, RS</span></div>
+    <button onclick="changeCity()">Alterar</button>
+  </div>
+
+  <section class="hero">
+    <p class="eyebrow">Economia inteligente</p>
+    <h1>Seu dinheiro rende mais quando você compara.</h1>
+    <p>Encontre os melhores preços em supermercados, farmácias e pet shops perto de você.</p>
+    <div class="hero-bag">🛍️</div>
+  </section>
+
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="text" id="search-input" placeholder="Buscar produto, marca ou loja...">
+  </div>
+
+  <div class="quick-actions">
+    <button class="quick-action" onclick="showPage('cart')">
+      <span>📝</span>
+      <strong>Lista de Compras</strong>
+    </button>
+    <button class="quick-action" onclick="scrollToSection('stores')">
+      <span>🏪</span>
+      <strong>Lojas Parceiras</strong>
+    </button>
+    <button class="quick-action" onclick="showPage('work')">
+      <span>💼</span>
+      <strong>Trabalhe Conosco</strong>
+    </button>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-card"><strong id="stat-savings">R$ 0,00</strong><span>Economia este mês</span></div>
+    <div class="stat-card"><strong id="stat-stores">0</strong><span>Lojas parceiras</span></div>
+    <div class="stat-card"><strong id="stat-items">0</strong><span>Itens na lista</span></div>
+    <div class="stat-card"><strong id="stat-favs">0</strong><span>Favoritos</span></div>
+  </div>
+
+  <section id="cart">
+    <div class="section-heading">
+      <h2>Sua Lista de Compras</h2>
+      <button onclick="clearCart()">Limpar</button>
+    </div>
+    <div class="basket-summary" id="basket-summary" style="display: none;">
+      <small>Melhor compra estimada em:</small>
+      <strong id="best-store-name">—</strong>
+      <div><span>Total de itens:</span><b id="cart-total-items">0</b></div>
+      <div><span>Valor total estimado:</span><b id="cart-total-value">R$ 0,00</b></div>
+    </div>
+    <div class="product-list" id="cart-list">
+      <div class="empty-state">
+        <div class="empty-emoji">🛒</div>
+        <h2>Lista vazia</h2>
+        <p>Busque produtos abaixo e adicione-os para calcular a melhor compra.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stores" style="margin-top: 28px;">
+    <div class="section-heading">
+      <h2>Lojas Parceiras</h2>
+      <button onclick="scrollToSection('products')">Ver produtos</button>
+    </div>
+    <div class="store-list" id="store-list">
+      <div class="empty-state"><div class="empty-emoji">⏳</div><h2>Carregando lojas...</h2></div>
+    </div>
+  </section>
+
+  <section id="products" style="margin-top: 28px;">
+    <div class="section-heading"><h2>Produtos em Destaque</h2></div>
+    <div class="chips" id="category-chips">
+      <button class="chip active" onclick="filterCategory('todos', this)">Todos</button>
+      <button class="chip" onclick="filterCategory('mercado', this)">Mercado</button>
+      <button class="chip" onclick="filterCategory('farmacia', this)">Farmácia</button>
+      <button class="chip" onclick="filterCategory('pet', this)">Pet</button>
+    </div>
+    <div class="product-list" id="product-list">
+      <div class="empty-state"><div class="empty-emoji">⏳</div><h2>Carregando produtos...</h2></div>
+    </div>
+  </section>
+
+  <nav class="bottom-nav">
+    <button class="nav-button active" onclick="showPage('home')"><span>🏠</span> Início</button>
+    <button class="nav-button" onclick="showPage('cart')"><span>📝</span> Lista</button>
+    <button class="nav-button" onclick="showPage('wallet')"><span>💰</span> Carteira</button>
+    <button class="nav-button" onclick="showPage('profile')"><span>👤</span> Perfil</button>
+  </nav>
+</div>
+
+<!-- PÁGINA LOGIN -->
+<div class="page" id="page-login" style="display: none;">
+  <div class="auth-container">
+    <div class="brand-mark" style="margin: 0 auto 20px;">P</div>
+    <h1>Bem-vindo ao Preço Perto</h1>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Criar Conta</button>
+    </div>
+    <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Email ou Telefone</label>
+        <input type="text" id="login-email" placeholder="seu@email.com ou (51) 99999-9999" required>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-password" placeholder="Sua senha" required>
+      </div>
+      <button type="submit" class="primary-button wide-button">Entrar</button>
+    </form>
+    <form id="register-form" class="auth-form" style="display: none;" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label>Nome Completo</label>
+        <input type="text" id="register-name" placeholder="Seu nome" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="register-email" placeholder="seu@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>Telefone</label>
+        <input type="tel" id="register-phone" placeholder="(51) 99999-9999" required>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" required minlength="6">
+      </div>
+      <button type="submit" class="primary-button wide-button">Criar Conta</button>
+    </form>
+  </div>
+</div>
+
+<!-- PÁGINA PERFIL -->
+<div class="page" id="page-profile" style="display: none;">
+  <header class="topbar">
+    <button class="icon-button" onclick="showPage('home')">←</button>
+    <h2 style="margin: 0;">Meu Perfil</h2>
+    <button class="icon-button" onclick="logout()">Sair</button>
+  </header>
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar-large" id="profile-avatar" onclick="changeProfilePhoto()">👤</div>
+      <h2 class="profile-name" id="profile-display-name">Usuário</h2>
+      <p class="profile-email" id="profile-display-email">email@exemplo.com</p>
+    </div>
+    <form class="profile-form" onsubmit="saveProfile(event)">
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" id="profile-name" placeholder="Seu nome">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="profile-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>Telefone</label>
+        <input type="tel" id="profile-phone" placeholder="(51) 99999-9999">
+      </div>
+      <div class="form-group">
+        <label>Cidade</label>
+        <input type="text" id="profile-city" placeholder="Sua cidade">
+      </div>
+      <button type="submit" class="primary-button wide-button">Salvar Alterações</button>
+    </form>
+    <div class="profile-stats">
+      <h3>Suas Estatísticas</h3>
+      <div class="stat-grid">
+        <div class="stat-item"><strong id="profile-missions">0</strong><span>Missões</span></div>
+        <div class="stat-item"><strong id="profile-cashback">R$ 0,00</strong><span>Cashback</span></div>
+        <div class="stat-item"><strong id="profile-savings">R$ 0,00</strong><span>Economia</span></div>
+      </div>
+    </div>
+    <button class="secondary-button wide-button" onclick="showPage('wallet')" style="margin-top: 20px;">💰 Ver Carteira</button>
+  </div>
+</div>
+
+<!-- PÁGINA CARTEIRA -->
+<div class="page" id="page-wallet" style="display: none;">
+  <header class="topbar">
+    <button class="icon-button" onclick="showPage('home')">←</button>
+    <h2 style="margin: 0;">Minha Carteira</h2>
+    <div style="width: 40px;"></div>
+  </header>
+  <div class="wallet-container">
+    <div class="wallet-balance">
+      <small>Saldo Disponível</small>
+      <h1 id="wallet-balance">R$ 0,00</h1>
+      <button class="withdraw-btn" onclick="withdraw()">Sacar via Pix</button>
+    </div>
+    <div class="wallet-stats">
+      <div class="wallet-stat"><strong id="wallet-missions">0</strong><span>Missões</span></div>
+      <div class="wallet-stat"><strong id="wallet-cashback">R$ 0,00</strong><span>Cashback</span></div>
+      <div class="wallet-stat"><strong id="wallet-bonus">R$ 0,00</strong><span>Bônus</span></div>
+    </div>
+    <h3 style="margin: 30px 0 15px;">Histórico de Transações</h3>
+    <div class="transaction-list" id="transaction-list">
+      <div class="empty-state">
+        <div class="empty-emoji">💰</div>
+        <h2>Nenhuma transação ainda</h2>
+        <p>Complete missões para começar a ganhar!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA TRABALHE CONOSCO -->
+<div class="page" id="page-work" style="display: none;">
+  <header class="topbar">
+    <button class="icon-button" onclick="showPage('home')">←</button>
+    <h2 style="margin: 0;">Trabalhe Conosco</h2>
+    <div style="width: 40px;"></div>
+  </header>
+  <div class="work-container">
+    <div class="hero-small">
+      <h1>Ganhe dinheiro real com o Preço Perto</h1>
+      <p>Escolha como quer trabalhar e comece a faturar hoje mesmo!</p>
+    </div>
+    <div class="work-methods">
+      <div class="work-method">
+        <div class="work-method-icon">💻</div>
+        <h3>Avaliador Digital</h3>
+        <span class="work-method-type">Remoto</span>
+        <p>Avalie fotos de produtos, valide preços online e modere conteúdo. Trabalhe de qualquer lugar!</p>
+        <div class="work-method-earnings"><strong>R$ 2-5</strong><span>por avaliação válida</span></div>
+        <button class="primary-button wide-button" onclick="applyForWork('digital')">Candidatar-se</button>
+      </div>
+      <div class="work-method">
+        <div class="work-method-icon">🏪</div>
+        <h3>Consultor de Loja</h3>
+        <span class="work-method-type">Híbrido</span>
+        <p>Visite lojas parceiras, cadastre produtos, tire fotos e valide promoções. Ganhe por visita!</p>
+        <div class="work-method-earnings"><strong>R$ 15-30</strong><span>por visita + bônus</span></div>
+        <button class="primary-button wide-button" onclick="applyForWork('store')">Candidatar-se</button>
+      </div>
+      <div class="work-method">
+        <div class="work-method-icon">📍</div>
+        <h3>Mapeador Urbano</h3>
+        <span class="work-method-type">Em Movimento</span>
+        <p>Tire fotos de fachadas, valide horários, mapeie novos estabelecimentos e entregue panfletos.</p>
+        <div class="work-method-earnings"><strong>R$ 5-10</strong><span>por local + R$ 0,50/panfleto</span></div>
+        <button class="primary-button wide-button" onclick="applyForWork('mapper')">Candidatar-se</button>
+      </div>
+    </div>
+    <div class="work-benefits">
+      <h3>Por que trabalhar conosco?</h3>
+      <ul>
+        <li>✅ Horários 100% flexíveis</li>
+        <li>✅ Pagamento semanal via Pix</li>
+        <li>✅ Sem vínculo empregatício</li>
+        <li>✅ Ganhe bônus por indicações</li>
+        <li>✅ Cresça e ganhe mais com o tempo</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA CARRINHO (FULL) -->
+<div class="page" id="page-cart" style="display: none;">
+  <header class="topbar">
+    <button class="icon-button" onclick="showPage('home')">←</button>
+    <h2 style="margin: 0;">Lista de Compras</h2>
+    <button class="icon-button" onclick="clearCart()">🗑️</button>
+  </header>
+  <div id="cart-full-content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL APLICAÇÃO -->
+<div class="modal-overlay" id="work-modal">
+  <div class="modal-sheet" style="position: relative;">
+    <button class="modal-close" onclick="closeWorkModal()">✕</button>
+    <h2 id="modal-title">Candidatar-se</h2>
+    <form onsubmit="submitWorkApplication(event)">
+      <div class="form-group">
+        <label>Nome Completo</label>
+        <input type="text" id="work-name" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="work-email" required>
+      </div>
+      <div class="form-group">
+        <label>Telefone</label>
+        <input type="tel" id="work-phone" required>
+      </div>
+      <div class="form-group">
+        <label>Cidade</label>
+        <input type="text" id="work-city" required>
+      </div>
+      <div class="form-group">
+        <label>Por que quer trabalhar conosco?</label>
+        <textarea id="work-motivation" rows="3" placeholder="Conte um pouco sobre você..."></textarea>
+      </div>
+      <button type="submit" class="primary-button wide-button">Enviar Candidatura</button>
+    </form>
+  </div>
+</div>
+
+</div>
+<script src="./app.js"></script>
+</body>
+</html>

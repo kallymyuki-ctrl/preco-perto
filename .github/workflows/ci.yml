@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    name: Verificações básicas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sintaxe do JavaScript
+        run: |
+          node --check app.js
+          node --check sw.js
+
+      - name: JSON válido no manifest
+        run: node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest','utf8')); console.log('manifest ok')"
+
+      - name: Arquivos referenciados existem
+        run: |
+          node -e "
+            const fs = require('fs');
+            const html = fs.readFileSync('index.html', 'utf8');
+            const refs = [...html.matchAll(/(?:href|src)=\"(\.\/[^\"]+)\"/g)].map(m => m[1].split('?')[0]);
+            const missing = [...new Set(refs)].filter(r => !fs.existsSync(r));
+            if (missing.length) { console.error('Faltando:', missing); process.exit(1); }
+            console.log(refs.length + ' referências locais verificadas');
+          "

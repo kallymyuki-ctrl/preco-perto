@@ -1,0 +1,23 @@
+# Dependências
+node_modules/
+
+# Build / artefatos gerados
+dist/
+build/
+coverage/
+
+# Segredos (se um dia o projeto usar backend)
+.env
+.env.*
+!.env.example
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores e logs
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+npm-debug.log*

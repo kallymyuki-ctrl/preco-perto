@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sem conexão · Preço Perto</title>
+<meta name="theme-color" content="#0f8b64">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<style>
+  :root { --green: #0f8b64; --ink: #13251f; --muted: #5b6b65; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
+    background: #f2f6f4; color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .card {
+    max-width: 380px; width: 100%; padding: 34px 26px; text-align: center;
+    background: #fff; border-radius: 22px; box-shadow: 0 10px 32px rgba(23, 55, 44, .1);
+  }
+  .emoji { font-size: 46px; margin-bottom: 10px; }
+  h1 { margin: 0 0 10px; font-size: 21px; }
+  p { margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  button {
+    width: 100%; padding: 14px; color: #fff; font-size: 14px; font-weight: 800;
+    background: var(--green); border: 0; border-radius: 12px; cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0b1512; color: #e8f1ed; }
+    .card { background: #14211d; }
+    p { color: #9db0a9; }
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="emoji" aria-hidden="true">📡</div>
+    <h1>Você está sem conexão</h1>
+    <p>Não foi possível carregar a página agora. Assim que a internet voltar, o Preço Perto abre com os últimos preços salvos.</p>
+    <button type="button" onclick="location.reload()">Tentar novamente</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# O app funciona offline; nada de conteúdo privado para indexar.
+Disallow: /sw.js

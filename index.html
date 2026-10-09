@@ -3,327 +3,392 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0f8b64">
-<meta name="description" content="Compare preços, ganhe cashback e trabalhe com o Preço Perto">
-<title>Preço Perto - Compare e Ganhe</title>
+<title>Preço Perto — Compare preços e ganhe cashback</title>
+<meta name="description" content="Compare preços de supermercados, farmácias e pet shops perto de você, monte sua lista de compras e descubra em qual loja a cesta inteira fica mais barata.">
+<meta name="robots" content="index, follow">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://kallymyuki-ctrl.github.io/preco-perto/">
+
+<meta name="theme-color" content="#0f8b64" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1512" media="(prefers-color-scheme: dark)">
+
+<!-- Open Graph / redes sociais -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Preço Perto">
+<meta property="og:title" content="Preço Perto — Compare preços e ganhe cashback">
+<meta property="og:description" content="Monte sua lista e veja em qual loja a compra inteira sai mais barata.">
+<meta property="og:image" content="./icons/icon-512.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:url" content="https://kallymyuki-ctrl.github.io/preco-perto/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Preço Perto — Compare preços e ganhe cashback">
+<meta name="twitter:description" content="Monte sua lista e veja em qual loja a compra inteira sai mais barata.">
+<meta name="twitter:image" content="./icons/icon-512.png">
+
+<!-- PWA / ícones -->
 <link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
-<link rel="stylesheet" href="./styles.css">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Preço Perto">
+
+<link rel="stylesheet" href="./styles.css?v=4">
+<script>
+  // Aplica o tema antes da primeira pintura para evitar "flash" de tela clara.
+  try {
+    var t = localStorage.getItem('pp_theme');
+    if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  } catch (e) { document.documentElement.dataset.theme = 'light'; }
+</script>
 </head>
 <body>
+
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<div class="offline-banner" id="offline-banner" role="status" hidden>
+  <span>📡</span> Você está offline — mostrando os últimos preços salvos.
+</div>
+
 <div class="app-shell" id="app">
+<main id="conteudo">
 
-<!-- PÁGINA HOME -->
-<div class="page" id="page-home">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">P</div>
-      <span>Preço Perto</span>
+  <!-- ══════════════ LOGIN ══════════════ -->
+  <section class="page" id="page-login" hidden aria-labelledby="login-title">
+    <div class="auth-container">
+      <div class="brand-mark brand-mark-lg" aria-hidden="true">P</div>
+      <h1 id="login-title">Bem-vindo ao Preço Perto</h1>
+      <p class="auth-sub">Compare preços, monte sua lista e receba cashback de verdade.</p>
+
+      <div class="auth-tabs" role="tablist" aria-label="Acesso à conta">
+        <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true" aria-controls="login-form" onclick="switchAuthTab('login')">Entrar</button>
+        <button class="auth-tab" id="tab-register" role="tab" aria-selected="false" aria-controls="register-form" onclick="switchAuthTab('register')">Criar conta</button>
+      </div>
+
+      <form id="login-form" class="auth-form" role="tabpanel" aria-labelledby="tab-login" novalidate onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-email">E-mail ou telefone</label>
+          <input type="text" id="login-email" name="email" placeholder="seu@email.com ou (51) 99999-9999" autocomplete="username" inputmode="email" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Senha</label>
+          <div class="input-with-action">
+            <input type="password" id="login-password" name="password" placeholder="Sua senha" autocomplete="current-password" required>
+            <button type="button" class="input-action" data-toggle-password="login-password" aria-label="Mostrar senha">👁️</button>
+          </div>
+        </div>
+        <p class="form-error" id="login-error" role="alert" hidden></p>
+        <button type="submit" class="primary-button wide-button">Entrar</button>
+        <button type="button" class="text-button" onclick="demoLogin()">Entrar como visitante (teste)</button>
+      </form>
+
+      <form id="register-form" class="auth-form" role="tabpanel" aria-labelledby="tab-register" hidden novalidate onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="register-name">Nome completo</label>
+          <input type="text" id="register-name" name="name" placeholder="Seu nome" autocomplete="name" required minlength="3">
+        </div>
+        <div class="form-group">
+          <label for="register-email">E-mail</label>
+          <input type="email" id="register-email" name="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" required>
+        </div>
+        <div class="form-group">
+          <label for="register-phone">Telefone</label>
+          <input type="tel" id="register-phone" name="phone" placeholder="(51) 99999-9999" autocomplete="tel" inputmode="numeric" required data-mask="phone">
+        </div>
+        <div class="form-group">
+          <label for="register-password">Senha</label>
+          <div class="input-with-action">
+            <input type="password" id="register-password" name="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required minlength="6" oninput="updatePasswordStrength(this.value)">
+            <button type="button" class="input-action" data-toggle-password="register-password" aria-label="Mostrar senha">👁️</button>
+          </div>
+          <div class="password-meter" aria-hidden="true"><span id="password-strength-bar"></span></div>
+          <small class="hint" id="password-strength-text">Use ao menos 6 caracteres.</small>
+        </div>
+        <p class="form-error" id="register-error" role="alert" hidden></p>
+        <button type="submit" class="primary-button wide-button">Criar conta</button>
+        <small class="hint">Ao criar a conta você concorda com nossa <button type="button" class="link-button" onclick="openInfo('privacidade')">Política de Privacidade</button>.</small>
+      </form>
     </div>
-    <button class="icon-button" onclick="showPage('profile')" title="Perfil">👤</button>
-  </header>
-
-  <div class="location-row">
-    <span class="location-pin">📍</span>
-    <div><strong>Entregar em:</strong> <span id="city-name">Porto Alegre, RS</span></div>
-    <button onclick="changeCity()">Alterar</button>
-  </div>
-
-  <section class="hero">
-    <p class="eyebrow">Economia inteligente</p>
-    <h1>Seu dinheiro rende mais quando você compara.</h1>
-    <p>Encontre os melhores preços em supermercados, farmácias e pet shops perto de você.</p>
-    <div class="hero-bag">🛍️</div>
   </section>
 
-  <div class="search-box">
-    <span>🔍</span>
-    <input type="text" id="search-input" placeholder="Buscar produto, marca ou loja...">
-  </div>
+  <!-- ══════════════ HOME ══════════════ -->
+  <section class="page" id="page-home" hidden aria-labelledby="home-title">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">P</div>
+        <span>Preço Perto</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-button" id="theme-toggle" onclick="toggleTheme()" title="Alternar tema" aria-label="Alternar tema claro e escuro">🌙</button>
+        <button class="icon-button" onclick="showPage('profile')" title="Meu perfil" aria-label="Abrir meu perfil">👤</button>
+      </div>
+    </header>
 
-  <div class="quick-actions">
-    <button class="quick-action" onclick="showPage('cart')">
-      <span>📝</span>
-      <strong>Lista de Compras</strong>
-    </button>
-    <button class="quick-action" onclick="scrollToSection('stores')">
-      <span></span>
-      <strong>Lojas Parceiras</strong>
-    </button>
-    <button class="quick-action" onclick="showPage('work')">
-      <span>💼</span>
-      <strong>Trabalhe Conosco</strong>
-    </button>
-  </div>
-
-  <div class="stat-strip">
-    <div class="stat-card"><strong id="stat-savings">R$ 0,00</strong><span>Economia este mês</span></div>
-    <div class="stat-card"><strong id="stat-stores">0</strong><span>Lojas parceiras</span></div>
-    <div class="stat-card"><strong id="stat-items">0</strong><span>Itens na lista</span></div>
-    <div class="stat-card"><strong id="stat-favs">0</strong><span>Favoritos</span></div>
-  </div>
-
-  <section id="cart">
-    <div class="section-heading">
-      <h2>Sua Lista de Compras</h2>
-      <button onclick="clearCart()">Limpar</button>
+    <div class="location-row">
+      <span class="location-pin" aria-hidden="true">📍</span>
+      <div><strong>Entregar em:</strong> <span id="city-name">Porto Alegre, RS</span></div>
+      <button type="button" onclick="openCityPicker()">Alterar</button>
     </div>
-    <div class="basket-summary" id="basket-summary" style="display: none;">
-      <small>Melhor compra estimada em:</small>
-      <strong id="best-store-name">—</strong>
-      <div><span>Total de itens:</span><b id="cart-total-items">0</b></div>
-      <div><span>Valor total estimado:</span><b id="cart-total-value">R$ 0,00</b></div>
+
+    <section class="hero">
+      <p class="eyebrow">Economia inteligente</p>
+      <h1 id="home-title">Seu dinheiro rende mais quando você compara.</h1>
+      <p>Encontre os melhores preços em supermercados, farmácias e pet shops perto de você.</p>
+      <div class="hero-bag" aria-hidden="true">🛍️</div>
+    </section>
+
+    <div class="search-box">
+      <span aria-hidden="true">🔍</span>
+      <label class="sr-only" for="search-input">Buscar produto, marca ou loja</label>
+      <input type="search" id="search-input" placeholder="Buscar produto, marca ou loja..." autocomplete="off" enterkeyhint="search">
     </div>
-    <div class="product-list" id="cart-list">
-      <div class="empty-state">
-        <div class="empty-emoji"></div>
-        <h2>Lista vazia</h2>
-        <p>Busque produtos abaixo e adicione-os para calcular a melhor compra.</p>
+
+    <div class="quick-actions">
+      <button class="quick-action" onclick="showPage('cart')">
+        <span aria-hidden="true">📝</span>
+        <strong>Lista de Compras</strong>
+      </button>
+      <button class="quick-action" onclick="scrollToSection('stores')">
+        <span aria-hidden="true">🏪</span>
+        <strong>Lojas Parceiras</strong>
+      </button>
+      <button class="quick-action" onclick="showPage('work')">
+        <span aria-hidden="true">💼</span>
+        <strong>Trabalhe Conosco</strong>
+      </button>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat-card"><strong id="stat-savings">R$ 0,00</strong><span>Economia estimada</span></div>
+      <div class="stat-card"><strong id="stat-stores">0</strong><span>Lojas parceiras</span></div>
+      <div class="stat-card"><strong id="stat-items">0</strong><span>Itens na lista</span></div>
+      <div class="stat-card"><strong id="stat-favs">0</strong><span>Favoritos</span></div>
+    </div>
+
+    <section id="cart" aria-labelledby="cart-title">
+      <div class="section-heading">
+        <h2 id="cart-title">Sua Lista de Compras</h2>
+        <button type="button" onclick="clearCart()">Limpar</button>
+      </div>
+      <div class="basket-summary" id="basket-summary" hidden>
+        <small>Melhor compra estimada em:</small>
+        <strong id="best-store-name">—</strong>
+        <div><span>Itens na lista:</span><b id="cart-total-items">0</b></div>
+        <div><span>Total estimado:</span><b id="cart-total-value">R$ 0,00</b></div>
+        <div><span>Economia vs. média das lojas:</span><b id="cart-savings-value">R$ 0,00</b></div>
+        <button type="button" class="ghost-button ghost-button-light" onclick="openBasketComparison()">Comparar todas as lojas</button>
+      </div>
+      <div class="product-list" id="cart-list" aria-live="polite"></div>
+    </section>
+
+    <section id="stores" aria-labelledby="stores-title">
+      <div class="section-heading">
+        <h2 id="stores-title">Lojas Parceiras</h2>
+        <button type="button" onclick="scrollToSection('products')">Ver produtos</button>
+      </div>
+      <div class="store-list" id="store-list"></div>
+    </section>
+
+    <section id="products" aria-labelledby="products-title">
+      <div class="section-heading">
+        <h2 id="products-title">Produtos em Destaque</h2>
+      </div>
+      <div class="chips" id="category-chips" role="group" aria-label="Filtrar por categoria">
+        <button type="button" class="chip active" data-category="todos" onclick="filterCategory('todos', this)">Todos</button>
+        <button type="button" class="chip" data-category="mercado" onclick="filterCategory('mercado', this)">Mercado</button>
+        <button type="button" class="chip" data-category="farmacia" onclick="filterCategory('farmacia', this)">Farmácia</button>
+        <button type="button" class="chip" data-category="pet" onclick="filterCategory('pet', this)">Pet</button>
+      </div>
+      <div class="list-toolbar">
+        <label class="sr-only" for="sort-select">Ordenar produtos</label>
+        <select id="sort-select" onchange="changeSort(this.value)">
+          <option value="price-asc">Menor preço</option>
+          <option value="price-desc">Maior preço</option>
+          <option value="offers">Mais ofertas</option>
+          <option value="name">Nome (A-Z)</option>
+        </select>
+        <span class="result-count" id="result-count"></span>
+      </div>
+      <div class="product-list" id="product-list"></div>
+    </section>
+
+    <footer class="site-footer">
+      <p>Preço Perto · Feito em Porto Alegre, RS</p>
+      <nav class="footer-links" aria-label="Links institucionais">
+        <button type="button" class="link-button" onclick="openInfo('sobre')">Sobre</button>
+        <button type="button" class="link-button" onclick="openInfo('privacidade')">Privacidade</button>
+        <button type="button" class="link-button" onclick="openInfo('termos')">Termos</button>
+      </nav>
+    </footer>
+  </section>
+
+  <!-- ══════════════ PERFIL ══════════════ -->
+  <section class="page" id="page-profile" hidden aria-labelledby="profile-title">
+    <header class="topbar">
+      <button class="icon-button" onclick="showPage('home')" aria-label="Voltar para o início">←</button>
+      <h2 id="profile-title" class="topbar-title">Meu Perfil</h2>
+      <button class="icon-button" onclick="logout()" aria-label="Sair da conta">⎋</button>
+    </header>
+    <div class="profile-container">
+      <div class="profile-header">
+        <button type="button" class="profile-avatar-large" id="profile-avatar" onclick="changeProfilePhoto()" aria-label="Trocar foto de perfil">👤</button>
+        <h2 class="profile-name" id="profile-display-name">Usuário</h2>
+        <p class="profile-email" id="profile-display-email">email@exemplo.com</p>
+      </div>
+      <form class="profile-form" onsubmit="saveProfile(event)">
+        <div class="form-group">
+          <label for="profile-name">Nome</label>
+          <input type="text" id="profile-name" placeholder="Seu nome" autocomplete="name" required>
+        </div>
+        <div class="form-group">
+          <label for="profile-email">E-mail</label>
+          <input type="email" id="profile-email" placeholder="seu@email.com" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label for="profile-phone">Telefone</label>
+          <input type="tel" id="profile-phone" placeholder="(51) 99999-9999" autocomplete="tel" data-mask="phone">
+        </div>
+        <div class="form-group">
+          <label for="profile-city">Cidade</label>
+          <input type="text" id="profile-city" placeholder="Sua cidade" autocomplete="address-level2">
+        </div>
+        <div class="form-group">
+          <label for="profile-pix">Chave Pix padrão</label>
+          <input type="text" id="profile-pix" placeholder="E-mail, telefone, CPF ou chave aleatória">
+        </div>
+        <button type="submit" class="primary-button wide-button">Salvar alterações</button>
+      </form>
+      <div class="profile-stats">
+        <h3>Suas Estatísticas</h3>
+        <div class="stat-grid">
+          <div class="stat-item"><strong id="profile-missions">0</strong><span>Missões</span></div>
+          <div class="stat-item"><strong id="profile-cashback">R$ 0,00</strong><span>Cashback</span></div>
+          <div class="stat-item"><strong id="profile-savings">R$ 0,00</strong><span>Economia</span></div>
+        </div>
+      </div>
+      <button type="button" class="secondary-button wide-button" onclick="showPage('wallet')">💰 Ver Carteira</button>
+      <button type="button" class="danger-button wide-button" onclick="logout()">Sair da conta</button>
+    </div>
+  </section>
+
+  <!-- ══════════════ CARTEIRA ══════════════ -->
+  <section class="page" id="page-wallet" hidden aria-labelledby="wallet-title">
+    <header class="topbar">
+      <button class="icon-button" onclick="showPage('home')" aria-label="Voltar para o início">←</button>
+      <h2 id="wallet-title" class="topbar-title">Minha Carteira</h2>
+      <div class="icon-button-placeholder" aria-hidden="true"></div>
+    </header>
+    <div class="wallet-container">
+      <div class="wallet-balance">
+        <small>Saldo disponível</small>
+        <h1 id="wallet-balance">R$ 0,00</h1>
+        <button type="button" class="withdraw-btn" onclick="openWithdraw()">Sacar via Pix</button>
+        <small class="wallet-note">Saque mínimo de R$ 10,00 · pago em até 2 dias úteis</small>
+      </div>
+      <div class="wallet-stats">
+        <div class="wallet-stat"><strong id="wallet-missions">0</strong><span>Missões</span></div>
+        <div class="wallet-stat"><strong id="wallet-cashback">R$ 0,00</strong><span>Cashback</span></div>
+        <div class="wallet-stat"><strong id="wallet-bonus">R$ 0,00</strong><span>Bônus</span></div>
+      </div>
+      <h3 class="section-subtitle">Histórico de transações</h3>
+      <div class="transaction-list" id="transaction-list"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ TRABALHE CONOSCO ══════════════ -->
+  <section class="page" id="page-work" hidden aria-labelledby="work-title">
+    <header class="topbar">
+      <button class="icon-button" onclick="showPage('home')" aria-label="Voltar para o início">←</button>
+      <h2 id="work-title" class="topbar-title">Trabalhe Conosco</h2>
+      <div class="icon-button-placeholder" aria-hidden="true"></div>
+    </header>
+    <div class="work-container">
+      <div class="hero-small">
+        <h1>Ganhe dinheiro real com o Preço Perto</h1>
+        <p>Escolha como quer trabalhar e comece a faturar hoje mesmo!</p>
+      </div>
+      <div class="work-methods">
+        <article class="work-method">
+          <div class="work-method-icon" aria-hidden="true">💻</div>
+          <h3>Avaliador Digital</h3>
+          <span class="work-method-type">Remoto</span>
+          <p>Avalie fotos de produtos, valide preços online e modere conteúdo. Trabalhe de qualquer lugar!</p>
+          <div class="work-method-earnings"><strong>R$ 2-5</strong><span>por avaliação válida</span></div>
+          <button type="button" class="primary-button wide-button" onclick="applyForWork('digital')">Candidatar-se</button>
+        </article>
+        <article class="work-method">
+          <div class="work-method-icon" aria-hidden="true">🏪</div>
+          <h3>Consultor de Loja</h3>
+          <span class="work-method-type">Híbrido</span>
+          <p>Visite lojas parceiras, cadastre produtos, tire fotos e valide promoções. Ganhe por visita!</p>
+          <div class="work-method-earnings"><strong>R$ 15-30</strong><span>por visita + bônus</span></div>
+          <button type="button" class="primary-button wide-button" onclick="applyForWork('store')">Candidatar-se</button>
+        </article>
+        <article class="work-method">
+          <div class="work-method-icon" aria-hidden="true">📍</div>
+          <h3>Mapeador Urbano</h3>
+          <span class="work-method-type">Em movimento</span>
+          <p>Tire fotos de fachadas, valide horários, mapeie novos estabelecimentos e entregue panfletos.</p>
+          <div class="work-method-earnings"><strong>R$ 5-10</strong><span>por local + R$ 0,50/panfleto</span></div>
+          <button type="button" class="primary-button wide-button" onclick="applyForWork('mapper')">Candidatar-se</button>
+        </article>
+      </div>
+      <div class="work-benefits">
+        <h3>Por que trabalhar conosco?</h3>
+        <ul>
+          <li>✅ Horários 100% flexíveis</li>
+          <li>✅ Pagamento semanal via Pix</li>
+          <li>✅ Sem vínculo empregatício</li>
+          <li>✅ Ganhe bônus por indicações</li>
+          <li>✅ Cresça e ganhe mais com o tempo</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <section id="stores" style="margin-top: 28px;">
-    <div class="section-heading">
-      <h2>Lojas Parceiras</h2>
-      <button onclick="scrollToSection('products')">Ver produtos</button>
-    </div>
-    <div class="store-list" id="store-list">
-      <div class="empty-state"><div class="empty-emoji">⏳</div><h2>Carregando lojas...</h2></div>
-    </div>
+  <!-- ══════════════ LISTA DE COMPRAS (página cheia) ══════════════ -->
+  <section class="page" id="page-cart" hidden aria-labelledby="cart-full-title">
+    <header class="topbar">
+      <button class="icon-button" onclick="showPage('home')" aria-label="Voltar para o início">←</button>
+      <h2 id="cart-full-title" class="topbar-title">Lista de Compras</h2>
+      <button class="icon-button" onclick="clearCart()" aria-label="Limpar lista">🗑️</button>
+    </header>
+    <div id="cart-full-content"></div>
   </section>
 
-  <section id="products" style="margin-top: 28px;">
-    <div class="section-heading"><h2>Produtos em Destaque</h2></div>
-    <div class="chips" id="category-chips">
-      <button class="chip active" onclick="filterCategory('todos', this)">Todos</button>
-      <button class="chip" onclick="filterCategory('mercado', this)">Mercado</button>
-      <button class="chip" onclick="filterCategory('farmacia', this)">Farmácia</button>
-      <button class="chip" onclick="filterCategory('pet', this)">Pet</button>
-    </div>
-    <div class="product-list" id="product-list">
-      <div class="empty-state"><div class="empty-emoji">⏳</div><h2>Carregando produtos...</h2></div>
-    </div>
-  </section>
+</main>
 
-  <nav class="bottom-nav">
-    <button class="nav-button active" onclick="showPage('home')"><span>🏠</span> Início</button>
-    <button class="nav-button" onclick="showPage('cart')"><span>📝</span> Lista</button>
-    <button class="nav-button" onclick="showPage('wallet')"><span>💰</span> Carteira</button>
-    <button class="nav-button" onclick="showPage('profile')"><span></span> Perfil</button>
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação principal">
+    <button type="button" class="nav-button active" data-page="home" onclick="showPage('home')"><span aria-hidden="true">🏠</span> Início</button>
+    <button type="button" class="nav-button" data-page="cart" onclick="showPage('cart')"><span aria-hidden="true">📝</span> Lista</button>
+    <button type="button" class="nav-button" data-page="wallet" onclick="showPage('wallet')"><span aria-hidden="true">💰</span> Carteira</button>
+    <button type="button" class="nav-button" data-page="profile" onclick="showPage('profile')"><span aria-hidden="true">👤</span> Perfil</button>
   </nav>
 </div>
 
-<!-- PÁGINA LOGIN -->
-<div class="page" id="page-login" style="display: none;">
-  <div class="auth-container">
-    <div class="brand-mark" style="margin: 0 auto 20px;">P</div>
-    <h1>Bem-vindo ao Preço Perto</h1>
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
-      <button class="auth-tab" onclick="switchAuthTab('register')">Criar Conta</button>
-    </div>
-    <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
-      <div class="form-group">
-        <label>Email ou Telefone</label>
-        <input type="text" id="login-email" placeholder="seu@email.com ou (51) 99999-9999" required>
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" id="login-password" placeholder="Sua senha" required>
-      </div>
-      <button type="submit" class="primary-button wide-button">Entrar</button>
-    </form>
-    <form id="register-form" class="auth-form" style="display: none;" onsubmit="handleRegister(event)">
-      <div class="form-group">
-        <label>Nome Completo</label>
-        <input type="text" id="register-name" placeholder="Seu nome" required>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="register-email" placeholder="seu@email.com" required>
-      </div>
-      <div class="form-group">
-        <label>Telefone</label>
-        <input type="tel" id="register-phone" placeholder="(51) 99999-9999" required>
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" required minlength="6">
-      </div>
-      <button type="submit" class="primary-button wide-button">Criar Conta</button>
-    </form>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Modal genérico (cidade, saque, confirmação, informações) -->
+<div class="modal-overlay" id="modal" hidden>
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modal-title" id="modal-sheet">
+    <button type="button" class="modal-close" onclick="closeModal()" aria-label="Fechar">✕</button>
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
   </div>
 </div>
 
-<!-- PÁGINA PERFIL -->
-<div class="page" id="page-profile" style="display: none;">
-  <header class="topbar">
-    <button class="icon-button" onclick="showPage('home')">←</button>
-    <h2 style="margin: 0;">Meu Perfil</h2>
-    <button class="icon-button" onclick="logout()">Sair</button>
-  </header>
-  <div class="profile-container">
-    <div class="profile-header">
-      <div class="profile-avatar-large" id="profile-avatar" onclick="changeProfilePhoto()">👤</div>
-      <h2 class="profile-name" id="profile-display-name">Usuário</h2>
-      <p class="profile-email" id="profile-display-email">email@exemplo.com</p>
-    </div>
-    <form class="profile-form" onsubmit="saveProfile(event)">
-      <div class="form-group">
-        <label>Nome</label>
-        <input type="text" id="profile-name" placeholder="Seu nome">
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="profile-email" placeholder="seu@email.com">
-      </div>
-      <div class="form-group">
-        <label>Telefone</label>
-        <input type="tel" id="profile-phone" placeholder="(51) 99999-9999">
-      </div>
-      <div class="form-group">
-        <label>Cidade</label>
-        <input type="text" id="profile-city" placeholder="Sua cidade">
-      </div>
-      <button type="submit" class="primary-button wide-button">Salvar Alterações</button>
-    </form>
-    <div class="profile-stats">
-      <h3>Suas Estatísticas</h3>
-      <div class="stat-grid">
-        <div class="stat-item"><strong id="profile-missions">0</strong><span>Missões</span></div>
-        <div class="stat-item"><strong id="profile-cashback">R$ 0,00</strong><span>Cashback</span></div>
-        <div class="stat-item"><strong id="profile-savings">R$ 0,00</strong><span>Economia</span></div>
-      </div>
-    </div>
-    <button class="secondary-button wide-button" onclick="showPage('wallet')" style="margin-top: 20px;">💰 Ver Carteira</button>
+<noscript>
+  <div class="noscript">
+    <h1>Preço Perto</h1>
+    <p>Este aplicativo precisa de JavaScript para comparar preços em tempo real. Habilite o JavaScript e recarregue a página.</p>
   </div>
-</div>
+</noscript>
 
-<!-- PÁGINA CARTEIRA -->
-<div class="page" id="page-wallet" style="display: none;">
-  <header class="topbar">
-    <button class="icon-button" onclick="showPage('home')">←</button>
-    <h2 style="margin: 0;">Minha Carteira</h2>
-    <div style="width: 40px;"></div>
-  </header>
-  <div class="wallet-container">
-    <div class="wallet-balance">
-      <small>Saldo Disponível</small>
-      <h1 id="wallet-balance">R$ 0,00</h1>
-      <button class="withdraw-btn" onclick="withdraw()">Sacar via Pix</button>
-    </div>
-    <div class="wallet-stats">
-      <div class="wallet-stat"><strong id="wallet-missions">0</strong><span>Missões</span></div>
-      <div class="wallet-stat"><strong id="wallet-cashback">R$ 0,00</strong><span>Cashback</span></div>
-      <div class="wallet-stat"><strong id="wallet-bonus">R$ 0,00</strong><span>Bônus</span></div>
-    </div>
-    <h3 style="margin: 30px 0 15px;">Histórico de Transações</h3>
-    <div class="transaction-list" id="transaction-list">
-      <div class="empty-state">
-        <div class="empty-emoji">💰</div>
-        <h2>Nenhuma transação ainda</h2>
-        <p>Complete missões para começar a ganhar!</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PÁGINA TRABALHE CONOSCO -->
-<div class="page" id="page-work" style="display: none;">
-  <header class="topbar">
-    <button class="icon-button" onclick="showPage('home')">←</button>
-    <h2 style="margin: 0;">Trabalhe Conosco</h2>
-    <div style="width: 40px;"></div>
-  </header>
-  <div class="work-container">
-    <div class="hero-small">
-      <h1>Ganhe dinheiro real com o Preço Perto</h1>
-      <p>Escolha como quer trabalhar e comece a faturar hoje mesmo!</p>
-    </div>
-    <div class="work-methods">
-      <div class="work-method">
-        <div class="work-method-icon">💻</div>
-        <h3>Avaliador Digital</h3>
-        <span class="work-method-type">Remoto</span>
-        <p>Avalie fotos de produtos, valide preços online e modere conteúdo. Trabalhe de qualquer lugar!</p>
-        <div class="work-method-earnings"><strong>R$ 2-5</strong><span>por avaliação válida</span></div>
-        <button class="primary-button wide-button" onclick="applyForWork('digital')">Candidatar-se</button>
-      </div>
-      <div class="work-method">
-        <div class="work-method-icon">🏪</div>
-        <h3>Consultor de Loja</h3>
-        <span class="work-method-type">Híbrido</span>
-        <p>Visite lojas parceiras, cadastre produtos, tire fotos e valide promoções. Ganhe por visita!</p>
-        <div class="work-method-earnings"><strong>R$ 15-30</strong><span>por visita + bônus</span></div>
-        <button class="primary-button wide-button" onclick="applyForWork('store')">Candidatar-se</button>
-      </div>
-      <div class="work-method">
-        <div class="work-method-icon">📍</div>
-        <h3>Mapeador Urbano</h3>
-        <span class="work-method-type">Em Movimento</span>
-        <p>Tire fotos de fachadas, valide horários, mapeie novos estabelecimentos e entregue panfletos.</p>
-        <div class="work-method-earnings"><strong>R$ 5-10</strong><span>por local + R$ 0,50/panfleto</span></div>
-        <button class="primary-button wide-button" onclick="applyForWork('mapper')">Candidatar-se</button>
-      </div>
-    </div>
-    <div class="work-benefits">
-      <h3>Por que trabalhar conosco?</h3>
-      <ul>
-        <li>✅ Horários 100% flexíveis</li>
-        <li>✅ Pagamento semanal via Pix</li>
-        <li>✅ Sem vínculo empregatício</li>
-        <li>✅ Ganhe bônus por indicações</li>
-        <li>✅ Cresça e ganhe mais com o tempo</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- PÁGINA CARRINHO (FULL) -->
-<div class="page" id="page-cart" style="display: none;">
-  <header class="topbar">
-    <button class="icon-button" onclick="showPage('home')">←</button>
-    <h2 style="margin: 0;">Lista de Compras</h2>
-    <button class="icon-button" onclick="clearCart()">🗑️</button>
-  </header>
-  <div id="cart-full-content"></div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<!-- MODAL APLICAÇÃO -->
-<div class="modal-overlay" id="work-modal">
-  <div class="modal-sheet" style="position: relative;">
-    <button class="modal-close" onclick="closeWorkModal()">✕</button>
-    <h2 id="modal-title">Candidatar-se</h2>
-    <form onsubmit="submitWorkApplication(event)">
-      <div class="form-group">
-        <label>Nome Completo</label>
-        <input type="text" id="work-name" required>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="work-email" required>
-      </div>
-      <div class="form-group">
-        <label>Telefone</label>
-        <input type="tel" id="work-phone" required>
-      </div>
-      <div class="form-group">
-        <label>Cidade</label>
-        <input type="text" id="work-city" required>
-      </div>
-      <div class="form-group">
-        <label>Por que quer trabalhar conosco?</label>
-        <textarea id="work-motivation" rows="3" placeholder="Conte um pouco sobre você..."></textarea>
-      </div>
-      <button type="submit" class="primary-button wide-button">Enviar Candidatura</button>
-    </form>
-  </div>
-</div>
-
-</div>
-<script src="./app.js"></script>
+<script src="./app.js?v=4"></script>
 </body>
 </html>

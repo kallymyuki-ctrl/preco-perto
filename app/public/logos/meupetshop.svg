@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="meupetshop">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#g)"/>
+  <path d="M0 18 Q0 0 18 0 H46 Q64 0 64 18 V28 Q32 42 0 28 Z" fill="url(#gloss)"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="17.5" fill="none" stroke="#ffffff" stroke-opacity="0.25"/>
+  <text x="32" y="39" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#ffffff" letter-spacing="-1">MP</text>
+</svg>

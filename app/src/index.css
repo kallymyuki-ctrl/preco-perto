@@ -1,0 +1,647 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+/* =========================================================
+   TOKENS
+   Novos (design profissional) + legados (ainda usados no App.tsx).
+   Os legados ficam aqui para o app não perder cor/layout.
+   ========================================================= */
+@theme {
+  /* --- paleta profissional (nova) --- */
+  --color-primary: #0a1f1c;
+  --color-primary-light: #14352f;
+  --color-accent: #0f8b64;
+  --color-accent-light: #e8f5f0;
+  --color-accent-dark: #087051;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8faf9;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  --color-text: #0a1f1c;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  --color-danger: #dc2626;
+  --color-warning: #f59e0b;
+  --color-success: #10b981;
+
+  /* --- legado (App.tsx / componentes) --- */
+  --color-green-brand: #0f8b64;
+  --color-green-dark: #087051;
+  --color-green-pale: #e8f5f0;
+  --color-teal: #14b8a6;
+  --color-ink: #0a1f1c;
+  --color-muted: #6b7280;
+  --color-line: #e5e7eb;
+  --color-canvas: #f3f4f6;
+  --color-orange: #f97316;
+  --color-red: #dc2626;
+  --color-blue: #3b82f6;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-surface-alt);
+  line-height: 1.5;
+  letter-spacing: -0.011em;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+button { font-family: inherit; }
+
+.app-shell {
+  position: relative;
+  min-height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero {
+  position: relative;
+  margin: 16px;
+  padding: 32px 24px;
+  color: #fff;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a1f1c 0%, #14352f 50%, #0f8b64 100%);
+  border-radius: 24px;
+}
+
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero::before {
+  top: -50%; right: -20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(15, 139, 100, 0.3) 0%, transparent 70%);
+}
+.hero::after {
+  bottom: -30%; left: -10%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(15, 139, 100, 0.2) 0%, transparent 70%);
+}
+
+.hero-content { position: relative; z-index: 1; }
+
+.hero-bag {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1;
+  display: grid;
+  width: 92px; height: 92px;
+  place-items: center;
+  font-size: 46px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 30px 30px 26px 26px;
+  transform: rotate(-8deg);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #0f8b64, #14b8a6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+.card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(15, 139, 100, 0.08);
+}
+
+.card-interactive { cursor: pointer; transition: all 0.2s ease; }
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.card-interactive:active { transform: translateY(0); }
+
+/* card-3d: usado no carrossel de lojas e nos cards de produto */
+.card-3d {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.card-3d:hover {
+  transform: translateY(-3px) rotateX(2deg);
+  box-shadow: 0 16px 32px -12px rgba(15, 23, 42, 0.18);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--color-accent); color: #fff; }
+.btn-primary:hover {
+  background: var(--color-accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 139, 100, 0.3);
+}
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+.btn-secondary:hover { background: var(--color-surface-alt); border-color: var(--color-accent); }
+.btn-ghost { background: transparent; color: var(--color-accent); }
+.btn-ghost:hover { background: var(--color-accent-light); }
+
+/* =========================================================
+   BUSCA
+   ========================================================= */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.search-bar:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(15, 139, 100, 0.1);
+}
+.search-bar input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text);
+}
+.search-bar input::placeholder { color: var(--color-text-muted); }
+
+/* =========================================================
+   SEÇÕES / CHIPS / STATS
+   ========================================================= */
+.section { padding: 24px 16px; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.section-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: gap 0.2s ease;
+}
+.section-link:hover { gap: 8px; }
+
+.chips {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.chip:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.chip.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+
+.stat-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.stat-card {
+  padding: 16px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+.stat-item { text-align: center; }
+.stat-item strong { display: block; font-size: 20px; color: var(--color-accent-dark); }
+.stat-item span { font-size: 11px; color: var(--color-text-secondary); }
+
+/* =========================================================
+   PRODUTOS
+   ========================================================= */
+.product-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+.product-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.product-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 80px; height: 80px;
+  font-size: 32px;
+  background: var(--color-surface-alt);
+  border-radius: 12px;
+}
+.product-info { flex: 1; min-width: 0; }
+.product-name {
+  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+.product-store { margin-bottom: 8px; font-size: 13px; color: var(--color-text-secondary); }
+.product-price {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+.product-price-old {
+  margin-right: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+/* badge de desconto usado nos cards de produto */
+.promo-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 2;
+  padding: 4px 10px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+}
+
+/* =========================================================
+   LOJAS
+   ========================================================= */
+.store-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.store-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.store-logo {
+  flex-shrink: 0;
+  width: 56px; height: 56px;
+  overflow: hidden;
+  background: var(--color-surface-alt);
+  border-radius: 12px;
+}
+.store-logo img { width: 100%; height: 100%; object-fit: cover; }
+.store-info { flex: 1; min-width: 0; }
+.store-name { margin-bottom: 4px; font-size: 15px; font-weight: 600; color: var(--color-text); }
+.store-meta { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--color-text-secondary); }
+.store-rating { display: flex; align-items: center; gap: 4px; color: var(--color-warning); font-weight: 600; }
+
+.store-logo-img { transition: transform 0.3s ease; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1)); }
+.store-logo-img:hover { transform: scale(1.05) rotate(2deg); }
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.badge-promo { background: #fef3c7; color: #92400e; }
+.badge-new { background: var(--color-accent-light); color: var(--color-accent); }
+.badge-discount { background: #fee2e2; color: #991b1b; }
+
+.status-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: 100px;
+}
+.status-badge.pending { color: #92400e; background: #fef3c7; }
+.status-badge.done { color: var(--color-accent-dark); background: var(--color-accent-light); }
+
+/* =========================================================
+   BANNER / MAPA
+   ========================================================= */
+.banner-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+}
+.banner-slide { position: relative; width: 100%; height: 200px; overflow: hidden; }
+.banner-slide img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.banner-slide:hover img { transform: scale(1.05); }
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+}
+
+.map-container {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  border: 2px solid var(--color-border);
+  border-radius: 20px;
+}
+
+/* =========================================================
+   NAVEGAÇÃO INFERIOR
+   ========================================================= */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: 100;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 480px;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 1px solid var(--color-border);
+  backdrop-filter: blur(12px);
+  transform: translateX(-50%);
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.nav-item:hover { color: var(--color-accent); }
+.nav-item.active { color: var(--color-accent); background: var(--color-accent-light); }
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+.toast-notification {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  z-index: 200;
+  max-width: calc(100% - 36px);
+  padding: 12px 18px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0a1f1c, #1e293b);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+  transform: translateX(-50%) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* =========================================================
+   MODAL / FORMULÁRIOS
+   ========================================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+.modal-content {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border-radius: 24px 24px 0 0;
+  animation: slideUp 0.3s ease;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text);
+  transition: all 0.2s ease;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(15, 139, 100, 0.1);
+}
+.input::placeholder { color: var(--color-text-muted); }
+
+.label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--color-text); }
+.divider { height: 1px; margin: 16px 0; background: var(--color-border); }
+
+.form-error {
+  margin: 0;
+  padding: 10px 12px;
+  color: var(--color-danger);
+  font-size: 12.5px;
+  font-weight: 700;
+  background: #fee2e2;
+  border-radius: 10px;
+}
+
+/* =========================================================
+   UTILITÁRIOS / ANIMAÇÕES
+   ========================================================= */
+.scroll-container { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+.scroll-container::-webkit-scrollbar { display: none; }
+.scroll-hidden { scrollbar-width: none; -ms-overflow-style: none; }
+.scroll-hidden::-webkit-scrollbar { display: none; }
+
+.shimmer {
+  background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.text-balance { text-wrap: balance; }
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.animate-fadeIn { animation: fadeIn 0.4s ease-out; }
+.animate-scaleIn { animation: scaleIn 0.3s ease-out; }
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* =========================================================
+   RESPONSIVO / ACESSIBILIDADE
+   ========================================================= */
+@media (min-width: 521px) {
+  body { padding: 18px 0; }
+  .app-shell {
+    min-height: calc(100dvh - 36px);
+    border-radius: 32px;
+    box-shadow: 0 25px 80px rgba(15, 23, 42, 0.15);
+  }
+  .bottom-nav { max-width: 480px; border-radius: 24px 24px 0 0; }
+}
+
+@media (max-width: 420px) {
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .hero { padding: 24px 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
